@@ -40,6 +40,8 @@ void Mesh::Read_Obj(const char* file)
         }
     }
     number_parts=triangles.size();
+    scale();
+    move();
 }
 
 // Check for an intersection against the ray.  See the base class for details.
@@ -73,6 +75,7 @@ vec3 Mesh::Normal(const vec3& point, int part) const
     vec3 B = vertices.at(triangles.at(part)[1]);
     vec3 C = vertices.at(triangles.at(part)[2]);
 
+    
     return cross((B-A),(C-A)).normalized();
     //return vec3();
 }
@@ -135,4 +138,81 @@ Box Mesh::Bounding_Box(int part) const
     Box b;
     TODO;
     return b;
+}
+
+void Mesh::scale(){
+    std::cout<<"scale executed"<<std::endl;
+    
+    for (size_t i = 0; i<vertices.size(); ++i){
+        vertices[i] *= 0.1;
+    }
+
+    double x_max = vertices[0].x[0], y_max = vertices[0].x[1], z_max = vertices[0].x[2];
+    double x_min = vertices[0].x[0], y_min = vertices[0].x[1], z_min = vertices[0].x[2];
+    for (size_t i = 0; i<vertices.size(); ++i){
+        if (vertices[i].x[0]>x_max) {
+            x_max = vertices[i].x[0];
+        }
+        if (vertices[i].x[1]>y_max) {
+            y_max = vertices[i].x[1];
+        }
+        if (vertices[i].x[2]>z_max) {
+            z_max = vertices[i].x[2];
+        }
+        if (vertices[i].x[0] < x_min) {
+            x_min = vertices[i].x[0];
+        }
+        if (vertices[i].x[1] < y_min) {
+            y_min = vertices[i].x[1];
+        }
+        if (vertices[i].x[2] < z_min) {
+            z_min = vertices[i].x[2];
+        }
+    }
+    std::cout<<"after scaling: "<<std::endl;
+    std::cout<<"x_max: "<< x_max <<" y_max: "<< y_max <<" z_max: "<< z_max <<std::endl;
+    std::cout<<"x_min: "<< x_min <<" y_min: "<< y_min <<" z_min: "<< z_min <<std::endl;
+    vec3 center = vec3((x_max+x_min)/2, (y_max+y_min)/2, (z_max+z_min)/2);
+    
+    std::cout<<center<<std::endl;
+    
+    for (size_t i = 0; i<vertices.size(); ++i){
+        vertices[i] = vertices[i] - center;
+    }
+    std::cout<<"after translation: "<<std::endl;
+    x_max = vertices[0].x[0]; y_max = vertices[0].x[1]; z_max = vertices[0].x[2];
+    x_min = vertices[0].x[0]; y_min = vertices[0].x[1]; z_min = vertices[0].x[2];
+    for (size_t i = 0; i<vertices.size(); ++i){
+        if (vertices[i].x[0]>x_max) {
+            x_max = vertices[i].x[0];
+        }
+        if (vertices[i].x[1]>y_max) {
+            y_max = vertices[i].x[1];
+        }
+        if (vertices[i].x[2]>z_max) {
+            z_max = vertices[i].x[2];
+        }
+        if (vertices[i].x[0] < x_min) {
+            x_min = vertices[i].x[0];
+        }
+        if (vertices[i].x[1] < y_min) {
+            y_min = vertices[i].x[1];
+        }
+        if (vertices[i].x[2] < z_min) {
+            z_min = vertices[i].x[2];
+        }
+    }
+    std::cout<<"x_max: "<< x_max <<" y_max: "<< y_max <<" z_max: "<< z_max <<std::endl;
+    std::cout<<"x_min: "<< x_min <<" y_min: "<< y_min <<" z_min: "<< z_min <<std::endl;
+    center = vec3((x_max+x_min)/2, (y_max+y_min)/2, (z_max+z_min)/2);
+    std::cout<<center<<std::endl;
+    
+}
+
+void Mesh::move(){
+    for (size_t i = 0; i<vertices.size(); ++i){
+        vertices[i].x[0] += x_move;
+        vertices[i].x[1] += y_move;
+        vertices[i].x[2] += z_move;
+    }
 }

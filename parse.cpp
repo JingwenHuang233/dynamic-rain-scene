@@ -24,7 +24,7 @@ void Parse(Render_World& world,int& width,int& height,const char* test_file)
     double f0;
     char buff[1000];
     vec3 u,v,w;
-    std::string name,s0,s1,s2;
+    std::string name,s0,s1,s2,s3,s4;
     
     std::map<std::string,vec3> colors;
     std::map<std::string,Object*> objects;
@@ -70,15 +70,19 @@ void Parse(Render_World& world,int& width,int& height,const char* test_file)
         }
         else if(item=="mesh")
         {
-            ss>>name>>s0>>s1;
+            ss>>name>>s0>>s1>>s2>>s3>>s4;
             assert(ss);
             Mesh* o=new Mesh;
+            std::cout<<s2<<" "<<s3<< " "<< s4<<std::endl;
+            o->x_move = std::stod(s2);
+            o->y_move = std::stod(s3);
+            o->z_move = std::stod(s4);
             o->Read_Obj(s0.c_str());
             std::map<std::string,Shader*>::const_iterator sh=shaders.find(s1);
             assert(sh!=shaders.end());
             o->material_shader=sh->second;
             if(name=="-") world.objects.push_back(o);
-            else objects[name]=o;
+            else objects[name]=o;  
         }
         else if(item=="flat_shader")
         {
