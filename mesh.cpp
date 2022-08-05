@@ -4,6 +4,7 @@
 #include <limits>
 #include <cfloat>
 #include <algorithm>
+#include "plane.h"
 
 
 // Consider a triangle to intersect a ray if the ray intersects the plane of the
@@ -48,27 +49,24 @@ void Mesh::Read_Obj(const char* file)
 Hit Mesh::Intersection(const Ray& ray, int part) const
 {
     //TODO;
-    double dist = 0;
-    if(part >= 0){ //check specified part
-		if(Intersect_Triangle(ray, part, dist)){
-			return {this, dist, part};
-		}
-	}
-    else{ //check against all parts and return intersected hit	
-		for(size_t i = 0; i < triangles.size(); ++i){
-			if(Intersect_Triangle(ray, i, dist)){
-				return {this, dist, (int)i};
+    Hit temp = {this, std::numeric_limits<double>::max(), part};
+	double dist = 0;
+	for(unsigned i = 0; i<triangles.size();i++){
+		if(Intersect_Triangle(ray, i, dist)){
+			if(dist < temp.dist){
+				temp.dist = dist;
+				temp.part = i;
 			}
 		}
-		return {NULL, 0, 0};
+
 	}
-	return {NULL, 0 , 0};
-    //return {};
+	return temp;
 }
 
 // Compute the normal direction for the triangle with index part.
 vec3 Mesh::Normal(const vec3& point, int part) const
 {
+    
     assert(part>=0);
     //TODO;
     vec3 A = vertices.at(triangles.at(part)[0]);
@@ -77,7 +75,7 @@ vec3 Mesh::Normal(const vec3& point, int part) const
 
     
     return cross((B-A),(C-A)).normalized();
-    //return vec3();
+    
 }
 
 // This is a helper routine whose purpose is to simplify the implementation
@@ -95,6 +93,7 @@ vec3 Mesh::Normal(const vec3& point, int part) const
 bool Mesh::Intersect_Triangle(const Ray& ray, int tri, double& dist) const
 {
     //TODO;
+    
     vec3 x(0, 0, 0);
     
     ivec3 triangle = triangles[tri];
@@ -129,6 +128,7 @@ bool Mesh::Intersect_Triangle(const Ray& ray, int tri, double& dist) const
 	}
     
    return false;
+   
 }
 
 // Compute the bounding box.  Return the bounding box of only the triangle whose
