@@ -1,0 +1,17 @@
+size 640 480
+color white 1 1 1
+color black 0 0 0
+#color amb 0 0 0
+#color diff 1 1 1
+#color spec 1 1 1
+#phong_shader shader amb diff spec 50
+#sphere - 0 0 0 6 shader
+phong_shader white_shader white white white 50
+mesh - drop2.obj white_shader -2 0 0
+mesh - drop2.obj white_shader 2 0 0
+point_light 0 10 0 white 1000
+point_light 0 -10 0 white 1000
+point_light 0 0 12 white 800
+ambient_light white 0
+enable_shadows 0
+camera 0 0 7 0 0 0 0 0 1 100
