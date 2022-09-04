@@ -11,6 +11,7 @@
 #include "render_world.h"
 #include "sphere.h"
 #include "spot_light.h"
+#include "transparent_shader.h"
 
 void Parse(Render_World& world,int& width,int& height,const char* test_file)
 {
@@ -111,6 +112,14 @@ void Parse(Render_World& world,int& width,int& height,const char* test_file)
             std::map<std::string,Shader*>::const_iterator sh=shaders.find(s0);
             assert(sh!=shaders.end());
             shaders[name]=new Reflective_Shader(world,sh->second,f0);
+        }
+        else if(item == "transparent_shader")
+        {
+            ss>>name>>s0>>s1;
+            assert(ss);
+            std::map<std::string,Shader*>::const_iterator sh=shaders.find(s0);
+            assert(sh!=shaders.end());
+            shaders[name]=new Transparent_Shader(world,sh->second,std::stod(s1));
         }
         else if(item=="point_light")
         {

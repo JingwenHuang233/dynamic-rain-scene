@@ -1,0 +1,22 @@
+size 640 480
+color white 1 1 1
+color black 0 0 0
+color gray .5 .5 .5
+color red 1 0 0
+color blue 0 0 1
+phong_shader red_shader red red white 50
+phong_shader white_shader white white white 50
+phong_shader gray_shader gray gray white 50
+transparent_shader refracta red_shader 1.34
+plane - -4 -1 0 1 0 0 red_shader
+#plane - 0 -2 0 0 1 0 gray_shader
+mesh - drop2.obj refracta -2 0 0
+mesh - drop2.obj refracta 2 0 0
+point_light 0 10 0 white 500
+point_light 0 -10 0 white 500
+point_light 0 0 12 white 400
+point_light 0 0 -12 white 400
+#point_light 6 0 0 blue 2000
+ambient_light white 0.1
+enable_shadows 1
+camera 0 0 11 0 0 0 0 0 1 110
