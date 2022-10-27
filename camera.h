@@ -17,7 +17,8 @@ inline Pixel Pixel_Color(const vec3& color)
 
 inline vec3 From_Pixel(Pixel color)
 {
-    return vec3(color>>24,(color>>16)&0xff,(color>>8)&0xff)/255.;
+    //return vec3(color>>24,(color>>16)&0xff,(color>>8)&0xff)/255.;
+    return vec3((color>>16)&0xff,(color>>8)&0xff,(color)&0xff)/255.;
 }
 
 class Camera

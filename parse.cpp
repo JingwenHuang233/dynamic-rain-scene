@@ -13,6 +13,7 @@
 #include "spot_light.h"
 #include "transparent_shader.h"
 
+void Read_png(Pixel*& data,int& width,int& height,const char* filename);
 void Parse(Render_World& world,int& width,int& height,const char* test_file)
 {
     FILE* F = fopen(test_file,"r");
@@ -120,6 +121,17 @@ void Parse(Render_World& world,int& width,int& height,const char* test_file)
             std::map<std::string,Shader*>::const_iterator sh=shaders.find(s0);
             assert(sh!=shaders.end());
             shaders[name]=new Transparent_Shader(world,sh->second,std::stod(s1));
+        }
+        else if(item == "bg_img") //Example: bg_img background.png
+        {
+            ss>>s0;
+            assert(ss);
+            Read_png(world.bg_data, world.w, world.h, s0.c_str());
+            /*
+            for (int i = 0; i<world.w*world.h; ++i){
+                std::cout<<world.bg_data[i]<< std::endl;
+            }
+            */
         }
         else if(item=="point_light")
         {

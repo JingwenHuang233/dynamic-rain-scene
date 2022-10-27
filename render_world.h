@@ -35,5 +35,9 @@ public:
 
     vec3 Cast_Ray(const Ray& ray,int recursion_depth);
     Hit Closest_Intersection(const Ray& ray);
+
+    Pixel* bg_data;
+    int w, h;
+    vec3 texture_lookup(Pixel* t, float u, float v);
 };
 #endif

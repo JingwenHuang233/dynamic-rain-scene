@@ -71,7 +71,46 @@ vec3 Render_World::Cast_Ray(const Ray& ray,int recursion_depth)
         color = closest.object->material_shader->Shade_Surface(ray, intersection_point, normal, recursion_depth);
     }
     else{
-        color = background_shader->Shade_Surface(ray, vec3(0,0,0), vec3(0,0,0), recursion_depth);
+        /*
+        u, v = spheremap_coords(r.direction);
+        color =  texture_lookup(scene.env_map, u, v);
+        */
+        double u = 1, v = 1;
+        if(abs(ray.direction.x[2]) > abs(ray.direction.x[0]) && abs(ray.direction.x[2]) > abs(ray.direction.x[1]) 
+          && ray.direction.x[2] > 0){ // +z face
+            u = 0.5*(1+ray.direction.x[0]/ray.direction.x[2]);
+            v = 0.5*(1+(-1)*ray.direction.x[1]/ray.direction.x[2]);
+        }
+        else if(abs(ray.direction.x[2]) > abs(ray.direction.x[0]) && abs(ray.direction.x[2]) > abs(ray.direction.x[1]) 
+          && ray.direction.x[2] < 0){ // -z face
+            u = 0.5*(1+ray.direction.x[0]/ray.direction.x[2]);
+            v = 0.5*(1+(-1)*ray.direction.x[1]/ray.direction.x[2]);
+        }
+        else if (abs(ray.direction.x[0]) > abs(ray.direction.x[1]) && abs(ray.direction.x[0]) > abs(ray.direction.x[2]) 
+          && ray.direction.x[0] > 0){ // +x face
+            u = 0.5*(1+(-1)*ray.direction.x[2]/ray.direction.x[0]);
+            v = 0.5*(1+(-1)*ray.direction.x[1]/ray.direction.x[0]);
+        }
+        else if (abs(ray.direction.x[0]) > abs(ray.direction.x[1]) && abs(ray.direction.x[0]) > abs(ray.direction.x[2]) 
+          && ray.direction.x[0] < 0){ // -x face
+            u = 0.5*(1+ray.direction.x[2]/ray.direction.x[0]);
+            v = 0.5*(1+(-1)*ray.direction.x[1]/ray.direction.x[0]);
+        }
+        else if (abs(ray.direction.x[1]) > abs(ray.direction.x[0]) && abs(ray.direction.x[1]) > abs(ray.direction.x[2]) 
+          && ray.direction.x[1] > 0){ // +y face
+            u = 0.5*(1+ray.direction.x[0]/ray.direction.x[1]);
+            v = 0.5*(1+ray.direction.x[2]/ray.direction.x[1]);
+        }
+        else if (abs(ray.direction.x[1]) > abs(ray.direction.x[0]) && abs(ray.direction.x[1]) > abs(ray.direction.x[2]) 
+          && ray.direction.x[1] < 0){ // -y face
+            u = 0.5*(1+ray.direction.x[0]/ray.direction.x[1]);
+            v = 0.5*(1+(-1)*ray.direction.x[2]/ray.direction.x[1]);
+        }
+        
+        color =  texture_lookup(bg_data, u, v);
+        
+        
+        //color = background_shader->Shade_Surface(ray, vec3(0,0,0), vec3(0,0,0), recursion_depth);
     }
     // determine the color here
     
@@ -85,4 +124,13 @@ void Render_World::Initialize_Hierarchy()
 
     hierarchy.Reorder_Entries();
     hierarchy.Build_Tree();
+}
+
+
+vec3 Render_World::texture_lookup(Pixel* t, float u, float v) {
+    int i = round(u * w - 0.5);
+    int j = round(v * h - 0.5);
+    Pixel color = t[j*w+i];
+    //std::cout<<color<< std::endl;
+    return From_Pixel(color);
 }
